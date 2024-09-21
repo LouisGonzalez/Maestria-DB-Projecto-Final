@@ -1,0 +1,154 @@
+
+Table "persona" {
+  "dpi" BIGINT [pk]
+  "primer_nombre" VARCHAR(50) [not null]
+  "segundo_nombre" VARCHAR(50)
+  "primer_apellido" VARCHAR(50) [not null]
+  "segundo_apellido" VARCHAR(50)
+  "fecha_de_nacimiento" DATE [not null]
+  "direccion" VARCHAR(500) [not null]
+}
+
+Table "telefono" {
+  "id_telefono" BIGINT [pk, increment]
+  "dpi" BIGINT [not null]
+  "telefono" VARCHAR(20) [not null]
+  "tipo" BIGINT [not null]
+}
+
+Table "email" {
+  "id_email" BIGINT [pk, increment]
+  "dpi" BIGINT [not null]
+  "email" VARCHAR(100) [not null]
+}
+
+Table "rol" {
+  "id_rol" BIGINT [pk, increment]
+  "nombre" VARCHAR(50) [not null]
+}
+
+Table "rol_persona" {
+  "dpi" BIGINT [not null]
+  "rol" BIGINT [not null]
+
+  Indexes {
+    (dpi, rol) [pk]
+  }
+}
+
+Table "nivel" {
+  "id_nivel" BIGINT [pk, increment]
+  "nivel" VARCHAR(50) [not null]
+}
+
+Table "materia" {
+  "id_materia" BIGINT [pk, increment]
+  "materia" VARCHAR(150) [not null]
+}
+
+Table "materia_nivel" {
+  "id_materia_nivel" BIGINT [pk, increment]
+  "materia" BIGINT [not null]
+  "nivel" BIGINT [not null]
+}
+
+Table "alumno_nivel" {
+  "id_alumno_nivel" BIGINT [pk, increment]
+  "dpi_alumno" BIGINT [not null]
+  "nivel" BIGINT [not null]
+}
+
+Table "tutor_puede_impartir" {
+  "dpi_tutor" BIGINT [not null]
+  "materia_nivel" BIGINT [not null]
+
+  Indexes {
+    (dpi_tutor, materia_nivel) [pk]
+  }
+}
+
+Table "encargado_alumno" {
+  "dpi_encargado" BIGINT [not null]
+  "dpi_alumno" BIGINT [not null]
+
+  Indexes {
+    (dpi_encargado, dpi_alumno) [pk]
+  }
+}
+
+Table "estado_tutoria" {
+  "id_estado" BIGINT [pk, increment]
+  "estado" BIGINT [not null]
+  "descripcion" VARCHAR(200) [not null]
+}
+
+Table "sucursal" {
+  "id_sucursal" BIGINT [pk, increment]
+  "sucursal" VARCHAR(200) [not null]
+}
+
+Table "salon" {
+  "id_salon" BIGINT [pk, increment]
+  "id_sucursal" BIGINT(200) [not null]
+  "salon" VARCHAR(200) [not null]
+}
+
+Table "tutoria" {
+  "id_tutoria" BIGINT [pk, increment]
+  "tutor" BIGINT [not null]
+  "alumno" BIGINT [not null]
+  "id_materia_nivel" BIGINT [not null]
+  "fecha" DATE [not null]
+  "hora_inicio" TIME [not null]
+  "hora_fin" TIME [not null]
+  "estado" BIGINT [not null]
+  "direccion" VARCHAR(255) [not null]
+  "salon" BIGINT [not null]
+  "calificacion" BIGINT
+}
+
+Table "horario_tutor" {
+  "id_horario_tutor" BIGINT [pk, increment]
+  "tutor" BIGINT [not null]
+  "dia" VARCHAR(200) [not null]
+  "hora_inicio" VARCHAR(200) [not null]
+  "hora_fin" VARCHAR(200) [not null]
+}
+
+Ref:"persona"."dpi" < "telefono"."dpi"
+
+Ref:"persona"."dpi" < "email"."dpi"
+
+Ref:"persona"."dpi" < "rol_persona"."dpi"
+
+Ref:"rol"."id_rol" < "rol_persona"."rol"
+
+Ref:"materia"."id_materia" < "materia_nivel"."materia"
+
+Ref:"nivel"."id_nivel" < "materia_nivel"."nivel"
+
+Ref:"persona"."dpi" < "alumno_nivel"."dpi_alumno"
+
+Ref:"nivel"."id_nivel" < "alumno_nivel"."nivel"
+
+Ref:"persona"."dpi" < "tutor_puede_impartir"."dpi_tutor"
+
+Ref:"materia_nivel"."id_materia_nivel" < "tutor_puede_impartir"."materia_nivel"
+
+Ref:"persona"."dpi" < "encargado_alumno"."dpi_encargado"
+
+Ref:"persona"."dpi" < "encargado_alumno"."dpi_alumno"
+
+Ref:"sucursal"."id_sucursal" < "salon"."id_sucursal"
+
+Ref:"persona"."dpi" < "tutoria"."tutor"
+
+Ref:"persona"."dpi" < "tutoria"."alumno"
+
+Ref:"materia_nivel"."id_materia_nivel" < "tutoria"."id_materia_nivel"
+
+Ref:"estado_tutoria"."id_estado" < "tutoria"."estado"
+
+Ref:"salon"."id_salon" < "tutoria"."salon"
+
+Ref:"persona"."dpi" < "horario_tutor"."tutor"
